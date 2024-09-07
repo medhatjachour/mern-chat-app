@@ -1,7 +1,9 @@
 import multer from "multer";
-import UserModel from "../model/User.js";
 import path from "path";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+//
+import UserModel from "../model/User.js";
 
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
@@ -19,7 +21,7 @@ export const Upload = multer({
   storage: storage,
 });
 
-async function Register(req, res) {
+async function register(req, res) {
   try {
     const { username, password } = req.body;
     let file = null;
@@ -31,7 +33,7 @@ async function Register(req, res) {
       return res.status(400).json({ msg: "user already exist" });
     }
     console.log("2");
-    
+
     const hash_password = await bcrypt.hash(password, 10);
 
     const newUser = new UserModel({
@@ -45,4 +47,27 @@ async function Register(req, res) {
     return res.status(500).json({ msg: error });
   }
 }
-export default Register;
+
+async function login(req, res) {
+  try {
+    const { username, password } = req.body;
+
+    const userExist = await UserModel.findOne({ username: username });
+    if (!userExist) {
+      return res.status(400).json({ msg: "user doesn't exist" });
+    }
+    const match_password = await bcrypt.compare(password, userExist.password);
+    if (!match_password) {
+      return res.status(400).json({ msg: "password doesn't matched" });
+    }
+    const token = jwt.sign({ id:userExist.id},process.env.JWT_KEY,{
+        expiresIn: "8h"
+    })
+    return res.status(200).json({ msg: "success", token, user:{_id: userExist.id,username:userExist.username} });
+  
+} catch (error) {
+    return res.status(500).json({ msg: error });
+  }
+}
+
+export { login, register };

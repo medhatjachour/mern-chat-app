@@ -1,13 +1,32 @@
 // eslint-disable-next-line no-unused-vars
 import React,{useState} from "react";
-
+import axios from "axios";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from 'react-redux';
+import { ChangeId } from "../app/features/userDataSlice";
 const Login = ({openSignUp}) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
   const [username, setUsername] = useState('');
-  const [passowrd, setPassowrd] = useState('');
- const handleSubmit = (e)=>{
-    e.preventDefault()
-  }
+  const [password, setPassword] = useState('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+     const res =  await axios.post("http://localhost:5000/chat/user/login", {username, password});
+     
+      if(res.data.msg === "success"){
+        console.log(res);
+        window.localStorage.setItem("chat-token", res.data.token);
+        dispatch(ChangeId(res.data.user._id))
+        navigate('/chat')
+        
+      }
+    } catch (error) {
+      // alert(error.msg)
+      console.log(error);
+    }
+  };
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Login</h2>
@@ -18,7 +37,7 @@ const Login = ({openSignUp}) => {
         </div>
         <div className="mb-4">
           <label  className="block text-gray-700"  htmlFor="password">Password:</label>
-          <input  className="w-full px-3 py-2 border" type="password" placeholder="enter password" onChange={(e)=>setPassowrd(e.target.value)}/>
+          <input  className="w-full px-3 py-2 border" type="password" placeholder="enter password" onChange={(e)=>setPassword(e.target.value)}/>
         </div>
         <div className="mb-4 flex items-center justify-between ">
           <label htmlFor="remember me"  className="inline-flex items-center">
