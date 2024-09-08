@@ -60,8 +60,8 @@ async function login(req, res) {
     if (!match_password) {
       return res.status(400).json({ msg: "password doesn't matched" });
     }
-    const token = jwt.sign({ id:userExist.id},process.env.JWT_KEY,{
-        expiresIn: "8h"
+    const token = jwt.sign({ _id:userExist.id}, process.env.JWT_KEY,{
+        expiresIn: "1h"
     })
     return res.status(200).json({ msg: "success", token, user:{_id: userExist.id,username:userExist.username} });
   
@@ -70,4 +70,8 @@ async function login(req, res) {
   }
 }
 
-export { login, register };
+const verify = (req, res) => {
+  return res.status(500).json({msg:"success"})
+}
+
+export { login, register , verify};
