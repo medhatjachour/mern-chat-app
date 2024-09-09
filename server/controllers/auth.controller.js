@@ -61,7 +61,7 @@ async function login(req, res) {
       return res.status(400).json({ msg: "password doesn't matched" });
     }
     const token = jwt.sign({ _id:userExist.id}, process.env.JWT_KEY,{
-        expiresIn: "1h"
+        expiresIn: "20h"
     })
     return res.status(200).json({ msg: "success", token, user:{_id: userExist.id,username:userExist.username} });
   
