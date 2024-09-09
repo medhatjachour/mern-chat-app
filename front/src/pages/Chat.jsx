@@ -9,7 +9,7 @@ const Chat = ({socket}) => {
   const user_id = useSelector(selectId);
   console.log(user_id);
   const [chatInit, setChatInit] = useState(false);
-  const [chat, setChat] = useState(false);
+  const [chat, setChat] = useState([]);
   const [ReceiverId, setReceiverId] = useState();
  
   return (
@@ -19,7 +19,7 @@ const Chat = ({socket}) => {
         <div className="w-3/4 bg-white flex flex-col bg-opacity-5 relative">
           {chatInit ? (
             <div>
-             <ChatForm ReceiverId={ReceiverId}/>
+             <ChatForm ReceiverId={ReceiverId} setChat = {setChat} chat={chat}/>
             </div>
           ) : (
             <div className="flex text-3xl justify-center items-center h-full">

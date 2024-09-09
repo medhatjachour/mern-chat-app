@@ -6,18 +6,23 @@ import PropTypes from "prop-types";
 
 import axios from "axios";
 
-const ChatForm = ({ ReceiverId ,setChat,chat}) => {
+const ChatForm = ({ ReceiverId, setChat, chat }) => {
   const [message, setMessage] = useState("");
   const user_id = useSelector(selectId);
 
-  const sendMessage = async () => {
+  const sendMessage = async (e) => {
+    e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:5000/chat/messages/send/" + ReceiverId
+        "http://localhost:5000/chat/message/send/" + ReceiverId,
+        { content: message },{headers: {
+            Authorization: `Bearer ${window.localStorage.getItem(
+              "chat-token"
+            )}`},
+          },
       );
-      setChat([...chat,{content: message,sender:user_id}])
+      setChat([...chat, { content: message, sender: user_id }]);
       console.log(res);
-      
     } catch (error) {
       console.log(error);
     }
@@ -44,7 +49,5 @@ ChatForm.propTypes = {
   ReceiverId: PropTypes.any,
   setChat: PropTypes.any,
   chat: PropTypes.any,
-  
-  
 };
 export default ChatForm;
