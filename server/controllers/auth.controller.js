@@ -69,9 +69,7 @@ async function login(req, res) {
     return res.status(500).json({ msg: error });
   }
 }
-
 const verify = (req, res) => {
-  return res.status(500).json({msg:"success"})
+  return res.status(200).json({msg:"success"})
 }
-
 export { login, register , verify};

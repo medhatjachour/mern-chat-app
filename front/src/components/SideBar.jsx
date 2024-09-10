@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 const SideBar = ({ setChat, setChatInit,socket,setReceiverId }) => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
-  console.log(users);
   useEffect(() => {
     const fetchedData = async () => {
       try {
@@ -20,8 +19,10 @@ const SideBar = ({ setChat, setChatInit,socket,setReceiverId }) => {
             },
           }
         );
-        setUsers(fetchedUsers.data.users);
+        console.log("fetchedUsers");
         console.log(fetchedUsers);
+        
+        setUsers(fetchedUsers.data.users);
       } catch (error) {
         console.log(error);
         navigate("/");
@@ -29,7 +30,28 @@ const SideBar = ({ setChat, setChatInit,socket,setReceiverId }) => {
     };
     fetchedData();
   }, []);
-  const startChat = (id)=>{
+  const startChat = async(id)=>{
+
+    try {const res = await axios.get(
+      "http://localhost:5000/chat/message/read/" + id,
+     {headers: {
+          Authorization: `Bearer ${window.localStorage.getItem(
+            "chat-token"
+          )}`},
+        },
+    );
+    console.log("res////////////");
+    console.log(res);
+    
+    setChat(res.data);
+      
+    } catch (error) {
+      if(error.res.message === "Not found"){
+        setChat([]);
+      }
+      console.log(error);
+      
+    }
     socket.emit('join',id)
     setChatInit(true);
     setReceiverId(id)

@@ -22,6 +22,7 @@ const ChatForm = ({ ReceiverId, setChat, chat }) => {
           },
       );
       setChat([...chat, { content: message, sender: user_id }]);
+      setMessage("")
       console.log(res);
     } catch (error) {
       console.log(error);
